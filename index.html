@@ -18,7 +18,7 @@
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
-      font-family: 'Cinzel', 'Noto Sans TC', serif;
+      font-family: 'Cinzel', 'Noto+Sans+TC', serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -32,7 +32,8 @@
     /* CRT 掃描線效果 */
     body::before {
         content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
         z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
     }
 
@@ -78,7 +79,7 @@
     .overlay-label { font-size: 0.6rem; color: #aaa; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
     #cafe-name { font-family: 'Cinzel', serif; color: var(--accent); font-size: 2.2rem; font-weight: 700; line-height: 1.1; text-shadow: 0 4px 15px rgba(0,0,0,1); margin-bottom: 5px; width: 100%; transition: all 0.2s; }
 
-    .info-grid { padding: 10x; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .info-grid { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
     .info-item { border: 1px solid var(--line); padding: 8px; position: relative; }
     .label { font-size: 0.5rem; color: #666; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px;}
     .value { font-size: 0.8rem; color: var(--text-main); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -86,8 +87,8 @@
 
     #dist-tag { position: absolute; top: 5px; right: 5px; font-size: 0.6rem; color: #4cd137; display: none; background: rgba(0,0,0,0.8); padding: 2px 4px; border: 1px solid #4cd137; }
 
-    .btn-container { margin-top: 15px; text-align: center; padding-bottom: 20px; width: clamp(280px, 92vw, 340px); }
-    #action-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 12px 40px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; width: 100%; }
+    .btn-container { margin-top: 15px; text-align: center; padding-bottom: 20px; }
+    #action-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 12px 40px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
     #action-btn:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
     #action-btn:active { transform: scale(0.95); }
     #action-btn.stop-mode { border-color: #ff4757; color: #ff4757; }
@@ -95,107 +96,104 @@
 
     #map-link-container { height: 0; overflow: hidden; transition: height 0.4s ease; padding: 0 10px; }
     #map-link-container.show { height: 45px; margin-top: 5px; margin-bottom: 10px; }
+
+    /* === 新增：IG link container === */
+    #ig-link-container { height: 0; overflow: hidden; transition: height 0.4s ease; padding: 0 10px; }
+    #ig-link-container.show { height: 45px; margin-top: 5px; margin-bottom: 10px; }
+
     .map-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px; box-sizing: border-box; text-decoration: none; border: 1px solid #3498db; color: #3498db; font-size: 0.75rem; transition: background 0.3s; letter-spacing: 1px; }
     .map-btn:hover { background: rgba(52, 152, 219, 0.1); }
     .map-arrow { font-size: 0.9rem; }
 
-    /* ==============================
-       NEW: Recommend UI (no redesign)
-       ============================== */
-    #rec-btn{
-      margin-top: 10px;
-      background: transparent;
-      color: #aaa;
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 10px 20px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.3s;
-    }
-    #rec-btn:hover{
-      color: var(--accent);
-      border-color: var(--accent);
-      background: rgba(212,175,55,0.08);
-      box-shadow: 0 0 16px rgba(212,175,55,0.18);
-    }
+    .ig-btn { border: 1px solid #8e44ad; color: #8e44ad; }
+    .ig-btn:hover { background: rgba(142, 68, 173, 0.12); }
 
-    .modal-backdrop{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 18px;
-    }
-    .modal-backdrop.show{ display: flex; }
-
-    .modal{
-      width: clamp(280px, 92vw, 360px);
-      border: 1px solid var(--line);
-      background: #0b0b0b;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
-      padding: 14px;
-    }
-    .modal-title{
-      color: var(--accent);
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .modal-grid{
-      display: grid;
-      gap: 8px;
-    }
-    .modal-grid input, .modal-grid textarea{
-      width: 100%;
-      box-sizing: border-box;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.15);
-      color: var(--text-main);
-      padding: 10px;
-      font-family: 'Noto Sans TC', sans-serif;
-      font-size: 0.85rem;
-      outline: none;
-    }
-    .modal-grid textarea{ min-height: 90px; resize: none; }
-
-    .modal-actions{
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .modal-btn{
+    /* === 推薦：Share Card (成功後顯示) === */
+    #share-card { width: clamp(280px, 92vw, 340px); border: 1px solid var(--line); background: #0e0e0e; margin-top: 12px; padding: 10px; box-shadow: 0 0 16px rgba(0,0,0,0.7); display: none; }
+    #share-card.show { display: block; }
+    .share-title { color: var(--accent); letter-spacing: 2px; font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
+    .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .share-item { border: 1px solid var(--line); padding: 8px; }
+    .share-item .k { font-size: 0.5rem; color: #666; letter-spacing: 1px; text-transform: uppercase; display:block; margin-bottom: 4px; }
+    .share-item .v { font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .share-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .share-actions button {
       flex: 1;
       background: transparent;
       border: 1px solid var(--accent);
       color: var(--accent);
-      padding: 10px;
+      padding: 10px 8px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 0.8rem;
       cursor: pointer;
-      letter-spacing: 1px;
-      font-family: 'Cinzel', serif;
       transition: all 0.25s;
     }
-    .modal-btn:hover{ background: rgba(212,175,55,0.08); }
-    .modal-btn.ghost{
-      border-color: rgba(255,255,255,0.15);
-      color: #aaa;
+    .share-actions button:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 12px rgba(212, 175, 55, 0.25); }
+
+    /* === 推薦：Modal (可選，保持極簡，不破壞原風格) === */
+    #rec-modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.72); z-index: 1000; padding: 16px;
     }
-    .modal-btn:disabled{
-      opacity: 0.5;
-      cursor: not-allowed;
+    #rec-modal.show { display: flex; }
+    .rec-box {
+      width: clamp(280px, 92vw, 420px);
+      border: 1px solid var(--line);
+      background: #0f0f0f;
+      box-shadow: 0 0 22px rgba(0,0,0,0.8);
+      padding: 14px;
     }
-    .modal-msg{
-      margin-top: 10px;
-      font-size: 0.8rem;
-      color: #aaa;
-      min-height: 18px;
+    .rec-head { display:flex; align-items:center; justify-content: space-between; margin-bottom: 10px; }
+    .rec-head .t { color: var(--accent); letter-spacing: 2px; font-size: 0.75rem; text-transform: uppercase; }
+    .rec-close { background: transparent; border: 1px solid #444; color: #aaa; padding: 6px 10px; cursor: pointer; }
+    .rec-close:hover { border-color: var(--accent); color: var(--accent); }
+    .rec-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .rec-form .full { grid-column: span 2; }
+    .rec-form label { font-size: 0.55rem; color: #777; letter-spacing: 1px; text-transform: uppercase; display:block; margin-bottom: 4px; }
+    .rec-form input, .rec-form textarea {
+      width: 100%; box-sizing: border-box;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-main);
+      padding: 8px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
     }
+    .rec-form textarea { min-height: 70px; resize: vertical; }
+    .rec-actions { display:flex; gap: 8px; margin-top: 10px; }
+    .rec-actions button {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 8px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+    .rec-actions button.secondary { border-color: #444; color: #bbb; }
+    .rec-actions button.secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .rec-actions button:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 12px rgba(212, 175, 55, 0.22); }
+    .rec-hint { margin-top: 8px; font-size: 0.75rem; color: #888; line-height: 1.4; }
+
+    /* === 右下角小按鈕（推薦） === */
+    #rec-fab {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 998;
+      background: rgba(17,17,17,0.9);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 12px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(0,0,0,0.7);
+    }
+    #rec-fab:hover { background: rgba(212,175,55,0.08); }
 
   </style>
 </head>
@@ -218,7 +216,7 @@
       </button>
       <button class="toggle-btn" id="btn-bgm" onclick="toggleBGM()">
         <span class="status-dot"></span> BGM
-    </button>
+      </button>
   </div>
 
   <div class="filters-row">
@@ -304,34 +302,88 @@
         <span class="map-arrow">➔</span>
       </a>
     </div>
+
+    <!-- 新增：IG 按鈕 (抽到店且有 IG 才顯示) -->
+    <div id="ig-link-container">
+      <a id="ig-link" href="#" target="_blank" class="map-btn ig-btn">
+        <span>OPEN INSTAGRAM</span>
+        <span class="map-arrow">➔</span>
+      </a>
+    </div>
   </div>
 
   <div class="btn-container">
-    <button id="action-btn" onclick="handleAction()">LOCATE & ROLL</button>
-    <button id="rec-btn" onclick="openRec()">RECOMMEND / 推薦店家</button>
+    <button id="action-btn" onclick="handleAction()">LOCATE &amp; ROLL</button>
   </div>
 
-  <!-- NEW: Recommendation Modal (no redesign) -->
-  <div id="rec-modal" class="modal-backdrop" onclick="closeRec(event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-title">RECOMMEND / 推薦咖啡廳</div>
-
-      <div class="modal-grid">
-        <input id="rec-city" placeholder="city (e.g., tainan / 台南市)" />
-        <input id="rec-name" placeholder="店名 *" />
-        <input id="rec-addr" placeholder="地址 *" />
-        <input id="rec-hours" placeholder="營業至 (e.g., 01:30 / 24:00)" />
-        <input id="rec-ig" placeholder="IG (帳號或連結都可)" />
-        <input id="rec-tags" placeholder="tags (安靜, 讀書, 老屋...)" />
-        <textarea id="rec-note" placeholder="備註 (可不填)"></textarea>
+  <!-- 推薦成功後：分享卡 -->
+  <div id="share-card">
+    <div class="share-title">RECOMMENDATION SAVED</div>
+    <div class="share-grid">
+      <div class="share-item">
+        <span class="k">Name</span>
+        <div class="v" id="share-name">-</div>
       </div>
-
-      <div class="modal-actions">
-        <button class="modal-btn" onclick="submitRec()">送出</button>
-        <button class="modal-btn ghost" onclick="closeRec()">取消</button>
+      <div class="share-item">
+        <span class="k">City</span>
+        <div class="v" id="share-city">-</div>
       </div>
+      <div class="share-item full" style="grid-column: span 2;">
+        <span class="k">Instagram</span>
+        <div class="v" id="share-ig">-</div>
+      </div>
+    </div>
+    <div class="share-actions">
+      <button id="btn-copy-share" type="button">一鍵複製分享文字</button>
+      <button id="btn-close-share" type="button">關閉</button>
+    </div>
+  </div>
 
-      <div id="rec-msg" class="modal-msg"></div>
+  <!-- 右下角：推薦按鈕 -->
+  <button id="rec-fab" type="button" onclick="openRecModal()">推薦店家</button>
+
+  <!-- 推薦表單 Modal -->
+  <div id="rec-modal" aria-hidden="true">
+    <div class="rec-box">
+      <div class="rec-head">
+        <div class="t">Recommend a Cafe</div>
+        <button class="rec-close" type="button" onclick="closeRecModal()">CLOSE</button>
+      </div>
+      <form id="rec-form" class="rec-form">
+        <div>
+          <label>City / 城市</label>
+          <input id="rec-city" name="city" placeholder="例如：高雄 / kaohsiung" required />
+        </div>
+        <div>
+          <label>Name / 店名</label>
+          <input id="rec-name" name="name" placeholder="店名" required />
+        </div>
+        <div class="full">
+          <label>Address / 地址</label>
+          <input id="rec-addr" name="addr" placeholder="地址" required />
+        </div>
+        <div>
+          <label>Hours / 營業至</label>
+          <input id="rec-hours" name="hours" placeholder="例如：01:30 / 24:00" />
+        </div>
+        <div>
+          <label>IG / Instagram</label>
+          <input id="rec-ig" name="ig" placeholder="@xxx 或 https://instagram.com/xxx" />
+        </div>
+        <div class="full">
+          <label>Features / 特色</label>
+          <input id="rec-features" name="features" placeholder="例如：有插座 / 老屋 / 氣氛佳" />
+        </div>
+        <div class="full">
+          <label>Note / 補充</label>
+          <textarea id="rec-note" name="note" placeholder="你想補充的推薦原因"></textarea>
+        </div>
+      </form>
+      <div class="rec-actions">
+        <button type="button" onclick="submitRecommendation()">SUBMIT</button>
+        <button type="button" class="secondary" onclick="closeRecModal()">CANCEL</button>
+      </div>
+      <div class="rec-hint">送出後會寫入你的 Google Sheet (Apps Script Web App). 成功後自動產生分享卡，可一鍵複製文字。</div>
     </div>
   </div>
 
@@ -340,18 +392,24 @@
   </audio>
 
   <script>
+    // ============================
+    // CONFIG
+    // ============================
     const SHEET_ID = "1AW32gRTeuDLrI3DrgaWlirBUsbGBuD9H1s59xnYsBH0";
     const RELIABLE_FALLBACK_IMG = "https://loremflickr.com/600/400/cafe,night,bar/all?lock=999";
 
-    // NEW: Apps Script Web App endpoint
-    const RECOMMEND_API = "https://script.google.com/macros/s/AKfycbyiVU0QqAmYigWZh7YZTdGrQnOiuzDnetZhsH-Qno52q6p8wlxKXrxIEr2DdVyxYeaWDw/exec";
+    // 你的 Apps Script Web App URL (已部署的 doPost)
+    // 你前面給的 exec URL：
+    const RECOMMEND_API_URL = "https://script.google.com/macros/s/AKfycbyiVU0QqAmYigWZh7YZTdGrQnOiuzDnetZhsH-Qno52q6p8wlxKXrxIEr2DdVyxYeaWDw/exec";
 
     function getStableRandomImageUrl() {
       const lock = Math.floor(Math.random() * 50) + 1;
       return `https://loremflickr.com/600/400/cafe,coffee,night,interior/all?lock=${lock}`;
     }
 
-    // 1. 建立全台城市資料結構
+    // ============================
+    // DATA STRUCTURES
+    // ============================
     let CAFE_DATABASE = {
         keelung: [], taipei: [], newtaipei: [], taoyuan: [], hsinchu: [], miaoli: [],
         taichung: [], changhua: [], nantou: [], yunlin: [], chiayi: [],
@@ -360,19 +418,18 @@
         penghu: [], kinmen: [], matsu: []
     };
 
-    // 2. 座標中心點 (GPS 模擬用)
     const CITIES_CENTER = {
         "keelung": { lat: 25.1276, lng: 121.7392 },
         "taipei": { lat: 25.0330, lng: 121.5654 },
         "newtaipei": { lat: 25.0120, lng: 121.4657 },
         "taoyuan": { lat: 24.9936, lng: 121.3010 },
-        "hsinchu": { lat: 24.8138, lng: 120.9675 }, // 含縣市
+        "hsinchu": { lat: 24.8138, lng: 120.9675 },
         "miaoli": { lat: 24.5602, lng: 120.8214 },
         "taichung": { lat: 24.1477, lng: 120.6736 },
         "changhua": { lat: 24.0518, lng: 120.5161 },
         "nantou": { lat: 23.9610, lng: 120.9719 },
         "yunlin": { lat: 23.7092, lng: 120.4313 },
-        "chiayi": { lat: 23.4801, lng: 120.4491 }, // 含縣市
+        "chiayi": { lat: 23.4801, lng: 120.4491 },
         "tainan": { lat: 22.9997, lng: 120.2270 },
         "kaohsiung": { lat: 22.6273, lng: 120.3014 },
         "pingtung": { lat: 22.5519, lng: 120.5487 },
@@ -384,7 +441,6 @@
         "matsu": { lat: 26.1512, lng: 119.9322 }
     };
 
-    // 3. 城市名稱對照表 (讓中文輸入能對應到英文Key)
     const CITY_MAP = {
       "基隆": "keelung", "基隆市": "keelung", "keelung": "keelung",
       "台北": "taipei", "台北市": "taipei", "臺北": "taipei", "臺北市": "taipei", "taipei": "taipei",
@@ -408,6 +464,9 @@
       "馬祖": "matsu", "連江縣": "matsu", "matsu": "matsu"
     };
 
+    // ============================
+    // STATE
+    // ============================
     let settingGPS = false;
     let settingOpen = false;
     let settingSound = true;
@@ -415,14 +474,28 @@
     let userLat = null;
     let userLng = null;
 
+    let timer = null;
+    let isSpinning = false;
+    let currentList = [];
+    let currentIndex = 0;
+    let spinToken = 0;
+
+    // ============================
+    // DOM
+    // ============================
     const btn = document.getElementById('action-btn');
     const nameEl = document.getElementById('cafe-name');
     const addrEl = document.getElementById('cafe-addr');
     const hoursEl = document.getElementById('cafe-hours');
     const featEl = document.getElementById('cafe-features');
     const imgEl = document.getElementById('cafe-image');
+
     const mapContainer = document.getElementById('map-link-container');
     const mapLink = document.getElementById('map-link');
+
+    const igContainer = document.getElementById('ig-link-container');
+    const igLink = document.getElementById('ig-link');
+
     const citySelect = document.getElementById('city-select');
     const moodSelect = document.getElementById('mood-select');
     const distTag = document.getElementById('dist-tag');
@@ -431,9 +504,31 @@
     const btnOpen = document.getElementById('btn-open');
     const btnSound = document.getElementById('btn-sound');
     const btnBGM = document.getElementById('btn-bgm');
-    const bgmPlayer = document.getElementById('bgm');
-    bgmPlayer.volume = 0.4; // 預設音量小一點
 
+    const bgmPlayer = document.getElementById('bgm');
+    bgmPlayer.volume = 0.4;
+
+    // Share Card DOM
+    const shareCard = document.getElementById('share-card');
+    const shareName = document.getElementById('share-name');
+    const shareCity = document.getElementById('share-city');
+    const shareIg = document.getElementById('share-ig');
+    const btnCopyShare = document.getElementById('btn-copy-share');
+    const btnCloseShare = document.getElementById('btn-close-share');
+
+    // Recommend Modal DOM
+    const recModal = document.getElementById('rec-modal');
+    const recCity = document.getElementById('rec-city');
+    const recName = document.getElementById('rec-name');
+    const recAddr = document.getElementById('rec-addr');
+    const recHours = document.getElementById('rec-hours');
+    const recIg = document.getElementById('rec-ig');
+    const recFeatures = document.getElementById('rec-features');
+    const recNote = document.getElementById('rec-note');
+
+    // ============================
+    // AUDIO (SFX)
+    // ============================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playTone(freq, type, duration) {
         if (!settingSound) return;
@@ -452,6 +547,9 @@
     function playTick() { playTone(800, 'square', 0.05); }
     function playStop() { playTone(150, 'sine', 0.6); }
 
+    // ============================
+    // HELPERS
+    // ============================
     function normalizeHoursString(s) {
       const t = String(s).trim();
       if (/^24\s*h$/i.test(t) || t === "24H" || t === "24h") return "24:00";
@@ -473,7 +571,7 @@
         const currentHour = now.getHours();
         const currentMin = now.getMinutes();
         const currentTimeVal = currentHour * 60 + currentMin;
-        let [closeH, closeM] = hoursStr.split(':').map(Number);
+        let [closeH, closeM] = String(hoursStr).split(':').map(Number);
         if (isNaN(closeH)) return true;
         let closeTimeVal = closeH * 60 + (closeM || 0);
         if (closeH < 12) closeTimeVal += 1440;
@@ -486,11 +584,62 @@
         const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2)
+                + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
+                * Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
     }
 
+    function normalizeIgToUrl(igValue) {
+      const raw = (igValue || "").trim();
+      if (!raw) return "";
+      if (/^https?:\/\//i.test(raw)) return raw;
+      // allow @handle
+      const handle = raw.replace(/^@/, "").trim();
+      if (!handle) return "";
+      // if already contains instagram.com
+      if (handle.includes("instagram.com")) {
+        return "https://" + handle.replace(/^https?:\/\//i, "");
+      }
+      return `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+    }
+
+    function cityToKey(cityRaw) {
+      const s = String(cityRaw || "").trim();
+      if (!s) return "";
+      return CITY_MAP[s] || CITY_MAP[s.toLowerCase()] || "";
+    }
+
+    function safeText(s) {
+      return String(s || "").trim();
+    }
+
+    function buildShareText(payload) {
+      const igUrl = normalizeIgToUrl(payload.ig);
+      const igText = igUrl ? `IG: ${igUrl}` : `IG: (未提供)`;
+      return `我推薦：${payload.name} / ${payload.city}\n${payload.addr}\n${igText}`;
+    }
+
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("已複製到剪貼簿");
+      } catch (e) {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        alert("已複製到剪貼簿");
+      }
+    }
+
+    // ============================
+    // TOGGLES
+    // ============================
     function toggleGPS() {
         settingGPS = !settingGPS;
         btnGPS.classList.toggle('active');
@@ -505,7 +654,7 @@
                         btnGPS.classList.add('gps-active');
                         alert("定位成功！");
                     },
-                    (err) => {
+                    () => {
                         alert("無法取得定位。");
                         settingGPS = false;
                         btnGPS.classList.remove('active');
@@ -551,6 +700,9 @@
         }
     }
 
+    // ============================
+    // GOOGLE SHEET (read)
+    // ============================
     function loadFromGoogleSheetJSONP() {
       return new Promise((resolve, reject) => {
         const cbName = "SHEET_CB_" + Math.random().toString(36).slice(2);
@@ -558,6 +710,7 @@
           try {
             delete window[cbName];
             script.remove();
+
             const cols = data.table.cols || [];
             const rows = data.table.rows || [];
             const colIndex = {};
@@ -567,39 +720,48 @@
             });
 
             const findCol = (keys) => {
-                for (const k of keys) { if (colIndex[k] !== undefined) return colIndex[k]; }
-                return null;
+              for (const k of keys) {
+                const kk = String(k).trim().toLowerCase();
+                if (colIndex[kk] !== undefined) return colIndex[kk];
+              }
+              return null;
             };
+
             const idxCity = findCol(["city", "城市", "地區"]);
             const idxName = findCol(["name", "店名", "名稱"]);
             const idxAddr = findCol(["addr", "address", "地址"]);
             const idxHours = findCol(["hours", "time", "營業時間"]);
             const idxFeatures = findCol(["features", "feature", "特色", "tags"]);
+            const idxIg = findCol(["ig", "instagram", "ig帳號", "ig account"]);
 
             if (idxCity == null || idxName == null || idxAddr == null) throw new Error("Missing Columns");
 
-            // 重置資料庫
-            for(let k in CAFE_DATABASE) CAFE_DATABASE[k] = [];
+            // reset
+            for (let k in CAFE_DATABASE) CAFE_DATABASE[k] = [];
 
             for (const r of rows) {
               const c = r.c || [];
-              const cityRaw = (c[idxCity]?.v || "").trim();
-              const name = (c[idxName]?.v || "").trim();
-              const addr = (c[idxAddr]?.v || "").trim();
-              let hours = (idxHours!==null && c[idxHours]) ? normalizeHoursString(c[idxHours].f || c[idxHours].v) : "--:--";
-              const features = (idxFeatures!==null && c[idxFeatures]?.v) ? String(c[idxFeatures].v) : "---";
+              const cityRaw = safeText(c[idxCity]?.v);
+              const name = safeText(c[idxName]?.v);
+              const addr = safeText(c[idxAddr]?.v);
+              const hours = (idxHours !== null && c[idxHours]) ? normalizeHoursString(c[idxHours].f || c[idxHours].v) : "--:--";
+              const features = (idxFeatures !== null && c[idxFeatures]?.v) ? String(c[idxFeatures].v) : "---";
+              const ig = (idxIg !== null && c[idxIg]?.v) ? String(c[idxIg].v).trim() : "";
 
-              const key = CITY_MAP[cityRaw];
+              const key = cityToKey(cityRaw);
               if (!key || !name) continue;
 
               const center = CITIES_CENTER[key];
               const lat = center ? (center.lat + (Math.random() - 0.5) * 0.1) : null;
               const lng = center ? (center.lng + (Math.random() - 0.5) * 0.1) : null;
 
-              CAFE_DATABASE[key].push({ name, addr, hours, features, lat, lng });
+              CAFE_DATABASE[key].push({ name, addr, hours, features, ig, lat, lng });
             }
+
             resolve();
-          } catch (e) { reject(e); }
+          } catch (e) {
+            reject(e);
+          }
         };
         const script = document.createElement("script");
         script.onerror = () => reject(new Error("Network Error"));
@@ -608,16 +770,11 @@
       });
     }
 
-    let timer = null;
-    let isSpinning = false;
-    let currentList = [];
-    let currentIndex = 0;
-    let spinToken = 0;
-
+    // ============================
+    // ROULETTE
+    // ============================
     async function handleAction() {
-      // 在使用者點擊時，嘗試啟動 Audio Context (解決自動播放限制)
       if (audioCtx.state === 'suspended') await audioCtx.resume();
-      // 在使用者點擊時，如果 BGM 開著但沒聲音，嘗試播放
       if (settingBGM && bgmPlayer.paused) bgmPlayer.play();
 
       if (!isSpinning) startRoulette();
@@ -645,7 +802,7 @@
               cafe.tempDist = null;
           }
           if (selectedMood !== 'all') {
-              const f = cafe.features.toLowerCase();
+              const f = String(cafe.features || "").toLowerCase();
               if (selectedMood === 'work' && !(f.includes('插座') || f.includes('讀書') || f.includes('安靜'))) pass = false;
               if (selectedMood === 'alcohol' && !(f.includes('酒') || f.includes('bar') || f.includes('微醺'))) pass = false;
               if (selectedMood === 'night' && !(f.includes('深夜') || f.includes('02:00') || f.includes('03:00') || f.includes('24h'))) pass = false;
@@ -663,7 +820,10 @@
       currentList = filteredList;
       isSpinning = true;
       document.body.classList.add("spinning");
+
       mapContainer.classList.remove('show');
+      igContainer.classList.remove('show');
+
       distTag.style.display = 'none';
       btn.innerHTML = "STOP / 鎖定";
       btn.classList.add('stop-mode');
@@ -695,132 +855,151 @@
       spinToken++;
       if (timer) { clearInterval(timer); timer = null; }
       document.body.classList.remove("spinning");
+
       const finalCafe = currentList[currentIndex];
+
       imgEl.onerror = function () { this.onerror = null; this.src = RELIABLE_FALLBACK_IMG; };
+
       nameEl.innerText = finalCafe.name;
       nameEl.style.opacity = 1;
       addrEl.innerText = finalCafe.addr;
       hoursEl.innerText = finalCafe.hours || "--:--";
       featEl.innerText = finalCafe.features || "---";
+
       if (finalCafe.tempDist) {
           distTag.innerText = `距 ${finalCafe.tempDist} km`;
           distTag.style.display = 'block';
       }
+
       btn.innerHTML = "LOCATE & ROLL";
       btn.classList.remove('stop-mode');
       citySelect.disabled = false;
       playStop();
+
       const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(finalCafe.name + " " + finalCafe.addr)}`;
       mapLink.href = mapUrl;
       mapContainer.classList.add('show');
+
+      // IG
+      const igUrl = normalizeIgToUrl(finalCafe.ig);
+      if (igUrl) {
+        igLink.href = igUrl;
+        igContainer.classList.add('show');
+      } else {
+        igLink.href = "#";
+        igContainer.classList.remove('show');
+      }
     }
 
-    // ==============================
-    // NEW: Recommendation functions
-    // ==============================
-    function getUserKey_(){
-      const k = "mc_userKey";
+    // ============================
+    // RECOMMEND MODAL
+    // ============================
+    function openRecModal() {
+      shareCard.classList.remove('show');
+      recModal.classList.add('show');
+      recModal.setAttribute('aria-hidden', 'false');
+
+      // prefill city based on current selection
+      recCity.value = citySelect.value;
+    }
+
+    function closeRecModal() {
+      recModal.classList.remove('show');
+      recModal.setAttribute('aria-hidden', 'true');
+    }
+
+    // ============================
+    // RECOMMEND SUBMIT (POST to Apps Script)
+    // ============================
+    async function submitRecommendation() {
+      const payload = {
+        city: safeText(recCity.value),
+        name: safeText(recName.value),
+        addr: safeText(recAddr.value),
+        hours: safeText(recHours.value),
+        features: safeText(recFeatures.value),
+        ig: safeText(recIg.value),
+        note: safeText(recNote.value),
+        source: "midnightcafe-web",
+        userKey: getUserKey_()
+      };
+
+      if (!payload.city || !payload.name || !payload.addr) {
+        alert("city / name / addr 為必填");
+        return;
+      }
+
+      try {
+        const res = await fetch(RECOMMEND_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => null);
+        if (!res.ok || !data || !data.ok) {
+          throw new Error((data && (data.error || data.message)) ? (data.error || data.message) : `HTTP ${res.status}`);
+        }
+
+        closeRecModal();
+        // show share card
+        showShareCard(payload);
+
+        // optional: reload sheet data so new entries can appear later
+        // (if you want immediate inclusion, you can keep this; otherwise comment out)
+        try { await loadFromGoogleSheetJSONP(); } catch(e) {}
+
+      } catch (err) {
+        alert("送出失敗：" + String(err && err.message ? err.message : err));
+      }
+    }
+
+    function showShareCard(payload) {
+      const igUrl = normalizeIgToUrl(payload.ig);
+      shareName.innerText = payload.name || "-";
+      shareCity.innerText = payload.city || "-";
+      shareIg.innerText = igUrl || (payload.ig ? payload.ig : "-");
+
+      const shareText = buildShareText({
+        city: payload.city,
+        name: payload.name,
+        addr: payload.addr,
+        ig: payload.ig
+      });
+
+      btnCopyShare.onclick = () => copyToClipboard(shareText);
+      btnCloseShare.onclick = () => shareCard.classList.remove('show');
+
+      shareCard.classList.add('show');
+    }
+
+    function getUserKey_() {
+      // local anonymous key
+      const k = "midnight_user_key";
       let v = localStorage.getItem(k);
-      if (!v){
+      if (!v) {
         v = "u_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
         localStorage.setItem(k, v);
       }
       return v;
     }
 
-    function normalizeIG_(s){
-      const raw = String(s || "").trim();
-      if (!raw) return "";
-      let x = raw.replace(/^@/, "");
-      x = x.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
-      x = x.split(/[/?#]/)[0];
-      return x.trim();
-    }
-
-    function openRec(){
-      const modal = document.getElementById("rec-modal");
-      const msg = document.getElementById("rec-msg");
-      msg.textContent = "";
-
-      // 預填：城市用目前選的 city key
-      document.getElementById("rec-city").value = citySelect.value || "";
-
-      modal.classList.add("show");
-    }
-
-    function closeRec(e){
-      if (e && e.target && e.target.id !== "rec-modal") return;
-      document.getElementById("rec-modal").classList.remove("show");
-    }
-
-    async function submitRec(){
-      const btns = document.querySelectorAll(".modal-btn");
-      const msg = document.getElementById("rec-msg");
-      msg.textContent = "Sending...";
-
-      const city = String(document.getElementById("rec-city").value || "").trim();
-      const name = String(document.getElementById("rec-name").value || "").trim();
-      const addr = String(document.getElementById("rec-addr").value || "").trim();
-      const hours = String(document.getElementById("rec-hours").value || "").trim();
-      const ig = normalizeIG_(document.getElementById("rec-ig").value);
-      const tags = String(document.getElementById("rec-tags").value || "").trim();
-      const note = String(document.getElementById("rec-note").value || "").trim();
-
-      if (!name || !addr){
-        msg.textContent = "店名、地址是必填。";
-        return;
-      }
-
-      const payload = {
-        city,
-        name,
-        addr,
-        hours,
-        ig,
-        tags,
-        note,
-        source: "midnightcafe-web",
-        userKey: getUserKey_(),
-        ua: navigator.userAgent
-      };
-
-      btns.forEach(b => b.disabled = true);
-
-      try{
-        const res = await fetch(RECOMMEND_API, {
-          method: "POST",
-          // 用 text/plain 避免 CORS preflight
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json().catch(() => null);
-
-        if (data && data.ok){
-          msg.textContent = "已送出 ✅ 感謝推薦";
-
-          // 清空欄位 (保留 city)
-          document.getElementById("rec-name").value = "";
-          document.getElementById("rec-addr").value = "";
-          document.getElementById("rec-hours").value = "";
-          document.getElementById("rec-ig").value = "";
-          document.getElementById("rec-tags").value = "";
-          document.getElementById("rec-note").value = "";
-
-          setTimeout(() => document.getElementById("rec-modal").classList.remove("show"), 900);
-        } else {
-          msg.textContent = (data && (data.error || data.message)) ? String(data.error || data.message) : "送出失敗";
-        }
-      } catch(err){
-        msg.textContent = "Network error / blocked";
-      } finally{
-        btns.forEach(b => b.disabled = false);
-      }
-    }
-
+    // ============================
+    // INIT
+    // ============================
     (async function init() {
-      try { await loadFromGoogleSheetJSONP(); } catch (e) { console.warn("Load failed", e); }
+      try {
+        await loadFromGoogleSheetJSONP();
+      } catch (e) {
+        console.warn("Load failed", e);
+      }
+
+      // allow closing modal by tapping backdrop
+      recModal.addEventListener('click', (ev) => {
+        if (ev.target === recModal) closeRecModal();
+      });
     })();
+
   </script>
 </body>
 </html>
