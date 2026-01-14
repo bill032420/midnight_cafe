@@ -55,7 +55,7 @@
     .select-wrapper { position: relative; border: 1px solid var(--line); flex: 1; }
     select { width: 100%; background: transparent; border: none; color: var(--text-main); font-family: 'Noto Sans TC', sans-serif; font-size: 0.8rem; padding: 8px; appearance: none; text-align: center; cursor: pointer; outline: none; }
     .select-wrapper::after { content: '▼'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: var(--accent); pointer-events: none; }
-    
+
     /* 下拉選單群組樣式 */
     optgroup { color: #888; background: #111; font-style: normal; font-weight: bold; }
     option { color: #e0e0e0; background: #111; padding: 5px; }
@@ -67,7 +67,7 @@
 
     .img-box { width: 100%; height: 220px; position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background-color: #000; }
     #cafe-image { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%) contrast(110%); transition: opacity 0.12s, filter 0.25s; }
-    
+
     body.spinning #cafe-image { filter: grayscale(50%) contrast(120%) blur(10px) brightness(0.7); transform: scale(1.1); }
     body.spinning #cafe-name { opacity: 0.5; filter: blur(2px); }
 
@@ -83,11 +83,11 @@
     .label { font-size: 0.5rem; color: #666; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px;}
     .value { font-size: 0.8rem; color: var(--text-main); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .full-width { grid-column: span 2; }
-    
+
     #dist-tag { position: absolute; top: 5px; right: 5px; font-size: 0.6rem; color: #4cd137; display: none; background: rgba(0,0,0,0.8); padding: 2px 4px; border: 1px solid #4cd137; }
 
-    .btn-container { margin-top: 15px; text-align: center; padding-bottom: 20px; }
-    #action-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 12px 40px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+    .btn-container { margin-top: 15px; text-align: center; padding-bottom: 20px; width: clamp(280px, 92vw, 340px); }
+    #action-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 12px 40px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; width: 100%; }
     #action-btn:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
     #action-btn:active { transform: scale(0.95); }
     #action-btn.stop-mode { border-color: #ff4757; color: #ff4757; }
@@ -98,6 +98,104 @@
     .map-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px; box-sizing: border-box; text-decoration: none; border: 1px solid #3498db; color: #3498db; font-size: 0.75rem; transition: background 0.3s; letter-spacing: 1px; }
     .map-btn:hover { background: rgba(52, 152, 219, 0.1); }
     .map-arrow { font-size: 0.9rem; }
+
+    /* ==============================
+       NEW: Recommend UI (no redesign)
+       ============================== */
+    #rec-btn{
+      margin-top: 10px;
+      background: transparent;
+      color: #aaa;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 10px 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    #rec-btn:hover{
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(212,175,55,0.08);
+      box-shadow: 0 0 16px rgba(212,175,55,0.18);
+    }
+
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 18px;
+    }
+    .modal-backdrop.show{ display: flex; }
+
+    .modal{
+      width: clamp(280px, 92vw, 360px);
+      border: 1px solid var(--line);
+      background: #0b0b0b;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      padding: 14px;
+    }
+    .modal-title{
+      color: var(--accent);
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .modal-grid{
+      display: grid;
+      gap: 8px;
+    }
+    .modal-grid input, .modal-grid textarea{
+      width: 100%;
+      box-sizing: border-box;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-main);
+      padding: 10px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .modal-grid textarea{ min-height: 90px; resize: none; }
+
+    .modal-actions{
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .modal-btn{
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      font-family: 'Cinzel', serif;
+      transition: all 0.25s;
+    }
+    .modal-btn:hover{ background: rgba(212,175,55,0.08); }
+    .modal-btn.ghost{
+      border-color: rgba(255,255,255,0.15);
+      color: #aaa;
+    }
+    .modal-btn:disabled{
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .modal-msg{
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #aaa;
+      min-height: 18px;
+    }
 
   </style>
 </head>
@@ -210,6 +308,31 @@
 
   <div class="btn-container">
     <button id="action-btn" onclick="handleAction()">LOCATE & ROLL</button>
+    <button id="rec-btn" onclick="openRec()">RECOMMEND / 推薦店家</button>
+  </div>
+
+  <!-- NEW: Recommendation Modal (no redesign) -->
+  <div id="rec-modal" class="modal-backdrop" onclick="closeRec(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-title">RECOMMEND / 推薦咖啡廳</div>
+
+      <div class="modal-grid">
+        <input id="rec-city" placeholder="city (e.g., tainan / 台南市)" />
+        <input id="rec-name" placeholder="店名 *" />
+        <input id="rec-addr" placeholder="地址 *" />
+        <input id="rec-hours" placeholder="營業至 (e.g., 01:30 / 24:00)" />
+        <input id="rec-ig" placeholder="IG (帳號或連結都可)" />
+        <input id="rec-tags" placeholder="tags (安靜, 讀書, 老屋...)" />
+        <textarea id="rec-note" placeholder="備註 (可不填)"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn" onclick="submitRec()">送出</button>
+        <button class="modal-btn ghost" onclick="closeRec()">取消</button>
+      </div>
+
+      <div id="rec-msg" class="modal-msg"></div>
+    </div>
   </div>
 
   <audio id="bgm" loop preload="auto">
@@ -220,8 +343,11 @@
     const SHEET_ID = "1AW32gRTeuDLrI3DrgaWlirBUsbGBuD9H1s59xnYsBH0";
     const RELIABLE_FALLBACK_IMG = "https://loremflickr.com/600/400/cafe,night,bar/all?lock=999";
 
+    // NEW: Apps Script Web App endpoint
+    const RECOMMEND_API = "https://script.google.com/macros/s/AKfycbyiVU0QqAmYigWZh7YZTdGrQnOiuzDnetZhsH-Qno52q6p8wlxKXrxIEr2DdVyxYeaWDw/exec";
+
     function getStableRandomImageUrl() {
-      const lock = Math.floor(Math.random() * 50) + 1; 
+      const lock = Math.floor(Math.random() * 50) + 1;
       return `https://loremflickr.com/600/400/cafe,coffee,night,interior/all?lock=${lock}`;
     }
 
@@ -233,7 +359,7 @@
         yilan: [], hualien: [], taitung: [],
         penghu: [], kinmen: [], matsu: []
     };
-    
+
     // 2. 座標中心點 (GPS 模擬用)
     const CITIES_CENTER = {
         "keelung": { lat: 25.1276, lng: 121.7392 },
@@ -314,17 +440,17 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type; 
+        osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime); 
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
     }
-    function playTick() { playTone(800, 'square', 0.05); } 
-    function playStop() { playTone(150, 'sine', 0.6); }   
+    function playTick() { playTone(800, 'square', 0.05); }
+    function playStop() { playTone(150, 'sine', 0.6); }
 
     function normalizeHoursString(s) {
       const t = String(s).trim();
@@ -342,26 +468,26 @@
     }
 
     function checkIsOpen(hoursStr) {
-        if (!hoursStr || hoursStr === "--:--") return true; 
+        if (!hoursStr || hoursStr === "--:--") return true;
         const now = new Date();
         const currentHour = now.getHours();
         const currentMin = now.getMinutes();
         const currentTimeVal = currentHour * 60 + currentMin;
         let [closeH, closeM] = hoursStr.split(':').map(Number);
-        if (isNaN(closeH)) return true; 
+        if (isNaN(closeH)) return true;
         let closeTimeVal = closeH * 60 + (closeM || 0);
-        if (closeH < 12) closeTimeVal += 1440; 
+        if (closeH < 12) closeTimeVal += 1440;
         let compareTimeVal = currentTimeVal;
-        if (currentHour < 12) compareTimeVal += 1440; 
+        if (currentHour < 12) compareTimeVal += 1440;
         return compareTimeVal < closeTimeVal;
     }
 
     function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; 
+        const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
     }
 
@@ -560,7 +686,7 @@
         hoursEl.innerText = "--:--";
         featEl.innerText = "SCANNING";
         imgEl.src = getStableRandomImageUrl();
-        playTick(); 
+        playTick();
       }, 100);
     }
 
@@ -583,10 +709,113 @@
       btn.innerHTML = "LOCATE & ROLL";
       btn.classList.remove('stop-mode');
       citySelect.disabled = false;
-      playStop(); 
+      playStop();
       const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(finalCafe.name + " " + finalCafe.addr)}`;
       mapLink.href = mapUrl;
       mapContainer.classList.add('show');
+    }
+
+    // ==============================
+    // NEW: Recommendation functions
+    // ==============================
+    function getUserKey_(){
+      const k = "mc_userKey";
+      let v = localStorage.getItem(k);
+      if (!v){
+        v = "u_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem(k, v);
+      }
+      return v;
+    }
+
+    function normalizeIG_(s){
+      const raw = String(s || "").trim();
+      if (!raw) return "";
+      let x = raw.replace(/^@/, "");
+      x = x.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
+      x = x.split(/[/?#]/)[0];
+      return x.trim();
+    }
+
+    function openRec(){
+      const modal = document.getElementById("rec-modal");
+      const msg = document.getElementById("rec-msg");
+      msg.textContent = "";
+
+      // 預填：城市用目前選的 city key
+      document.getElementById("rec-city").value = citySelect.value || "";
+
+      modal.classList.add("show");
+    }
+
+    function closeRec(e){
+      if (e && e.target && e.target.id !== "rec-modal") return;
+      document.getElementById("rec-modal").classList.remove("show");
+    }
+
+    async function submitRec(){
+      const btns = document.querySelectorAll(".modal-btn");
+      const msg = document.getElementById("rec-msg");
+      msg.textContent = "Sending...";
+
+      const city = String(document.getElementById("rec-city").value || "").trim();
+      const name = String(document.getElementById("rec-name").value || "").trim();
+      const addr = String(document.getElementById("rec-addr").value || "").trim();
+      const hours = String(document.getElementById("rec-hours").value || "").trim();
+      const ig = normalizeIG_(document.getElementById("rec-ig").value);
+      const tags = String(document.getElementById("rec-tags").value || "").trim();
+      const note = String(document.getElementById("rec-note").value || "").trim();
+
+      if (!name || !addr){
+        msg.textContent = "店名、地址是必填。";
+        return;
+      }
+
+      const payload = {
+        city,
+        name,
+        addr,
+        hours,
+        ig,
+        tags,
+        note,
+        source: "midnightcafe-web",
+        userKey: getUserKey_(),
+        ua: navigator.userAgent
+      };
+
+      btns.forEach(b => b.disabled = true);
+
+      try{
+        const res = await fetch(RECOMMEND_API, {
+          method: "POST",
+          // 用 text/plain 避免 CORS preflight
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (data && data.ok){
+          msg.textContent = "已送出 ✅ 感謝推薦";
+
+          // 清空欄位 (保留 city)
+          document.getElementById("rec-name").value = "";
+          document.getElementById("rec-addr").value = "";
+          document.getElementById("rec-hours").value = "";
+          document.getElementById("rec-ig").value = "";
+          document.getElementById("rec-tags").value = "";
+          document.getElementById("rec-note").value = "";
+
+          setTimeout(() => document.getElementById("rec-modal").classList.remove("show"), 900);
+        } else {
+          msg.textContent = (data && (data.error || data.message)) ? String(data.error || data.message) : "送出失敗";
+        }
+      } catch(err){
+        msg.textContent = "Network error / blocked";
+      } finally{
+        btns.forEach(b => b.disabled = false);
+      }
     }
 
     (async function init() {
