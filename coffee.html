@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIDNIGHT CAFE: TAIWAN ALL</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+TC:wght@300;500&display=swap');
+
+    :root {
+      --bg-color: #050505;
+      --text-main: #e0e0e0;
+      --accent: #d4af37; /* 香檳金 */
+      --accent-glow: rgba(212, 175, 55, 0.4);
+      --line: rgba(255, 255, 255, 0.15);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Cinzel', 'Noto Sans TC', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow-y: auto;
+      padding: 10px 0;
+    }
+
+    /* CRT 掃描線效果 */
+    body::before {
+        content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+    }
+
+    .header { text-align: center; margin-bottom: 15px; position: relative; width: 320px; }
+    h1 { font-size: 1.4rem; letter-spacing: 3px; color: var(--accent); margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 10px var(--accent-glow); }
+    .subtitle { font-size: 0.55rem; color: #666; letter-spacing: 2px; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 10px; }
+
+    /* === 控制面板 === */
+    .control-panel { display: flex; gap: 8px; margin-bottom: 10px; width: 320px; justify-content: space-between; flex-wrap: wrap; }
+    .toggle-btn {
+        background: transparent; border: 1px solid #444; color: #666; padding: 6px 5px; font-size: 0.65rem; cursor: pointer; flex: 1; min-width: 60px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 4px; user-select: none;
+    }
+    .toggle-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 8px var(--accent-glow); }
+    .status-dot { width: 5px; height: 5px; background-color: #444; border-radius: 50%; display: inline-block; }
+    .toggle-btn.active .status-dot { background-color: var(--accent); box-shadow: 0 0 5px var(--accent); }
+    .toggle-btn.gps-active .status-dot { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
+
+    /* === 選單區 === */
+    .filters-row { width: 320px; display: flex; gap: 10px; margin-bottom: 15px; }
+    .select-wrapper { position: relative; border: 1px solid var(--line); flex: 1; }
+    select { width: 100%; background: transparent; border: none; color: var(--text-main); font-family: 'Noto Sans TC', sans-serif; font-size: 0.8rem; padding: 8px; appearance: none; text-align: center; cursor: pointer; outline: none; }
+    .select-wrapper::after { content: '▼'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: var(--accent); pointer-events: none; }
+    
+    /* 下拉選單群組樣式 */
+    optgroup { color: #888; background: #111; font-style: normal; font-weight: bold; }
+    option { color: #e0e0e0; background: #111; padding: 5px; }
+
+    /* === 主卡片 === */
+    #main-frame { width: 320px; border: 1px solid var(--line); padding: 2px; position: relative; background: #111; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+    #main-frame::before { content: ''; position: absolute; top: -1px; left: -1px; width: 15px; height: 15px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); z-index: 10; }
+    #main-frame::after { content: ''; position: absolute; bottom: -1px; right: -1px; width: 15px; height: 15px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); z-index: 10; }
+
+    .img-box { width: 100%; height: 220px; position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background-color: #000; }
+    #cafe-image { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%) contrast(110%); transition: opacity 0.12s, filter 0.25s; }
+    
+    body.spinning #cafe-image { filter: grayscale(50%) contrast(120%) blur(10px) brightness(0.7); transform: scale(1.1); }
+    body.spinning #cafe-name { opacity: 0.5; filter: blur(2px); }
+
+    .scan-line { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: rgba(212, 175, 55, 0.3); animation: scan 2s linear infinite; pointer-events: none; z-index: 5; }
+    @keyframes scan { 0% {top:0;} 100% {top:100%;} }
+
+    .name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; background: linear-gradient(to top, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0) 80%); z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; }
+    .overlay-label { font-size: 0.6rem; color: #aaa; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
+    #cafe-name { font-family: 'Cinzel', serif; color: var(--accent); font-size: 2.2rem; font-weight: 700; line-height: 1.1; text-shadow: 0 4px 15px rgba(0,0,0,1); margin-bottom: 5px; width: 100%; transition: all 0.2s; }
+
+    .info-grid { padding: 10x; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .info-item { border: 1px solid var(--line); padding: 8px; position: relative; }
+    .label { font-size: 0.5rem; color: #666; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px;}
+    .value { font-size: 0.8rem; color: var(--text-main); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .full-width { grid-column: span 2; }
+    
+    #dist-tag { position: absolute; top: 5px; right: 5px; font-size: 0.6rem; color: #4cd137; display: none; background: rgba(0,0,0,0.8); padding: 2px 4px; border: 1px solid #4cd137; }
+
+    .btn-container { margin-top: 15px; text-align: center; padding-bottom: 20px; }
+    #action-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 12px 40px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+    #action-btn:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+    #action-btn:active { transform: scale(0.95); }
+    #action-btn.stop-mode { border-color: #ff4757; color: #ff4757; }
+    #action-btn.stop-mode:hover { box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); background: rgba(255, 71, 87, 0.1); }
+
+    #map-link-container { height: 0; overflow: hidden; transition: height 0.4s ease; padding: 0 10px; }
+    #map-link-container.show { height: 45px; margin-top: 5px; margin-bottom: 10px; }
+    .map-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px; box-sizing: border-box; text-decoration: none; border: 1px solid #3498db; color: #3498db; font-size: 0.75rem; transition: background 0.3s; letter-spacing: 1px; }
+    .map-btn:hover { background: rgba(52, 152, 219, 0.1); }
+    .map-arrow { font-size: 0.9rem; }
+
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>Midnight Cafe</h1>
+    <div class="subtitle">TAIWAN NEURAL NAV / 全台隨機導航</div>
+  </div>
+
+  <div class="control-panel">
+      <button class="toggle-btn" id="btn-gps" onclick="toggleGPS()">
+          <span class="status-dot"></span> 10KM 內
+      </button>
+      <button class="toggle-btn" id="btn-open" onclick="toggleOpen()">
+          <span class="status-dot"></span> 營業中
+      </button>
+      <button class="toggle-btn active" id="btn-sound" onclick="toggleSound()">
+          <span class="status-dot"></span> 音效
+      </button>
+      <button class="toggle-btn" id="btn-bgm" onclick="toggleBGM()">
+        <span class="status-dot"></span> BGM
+    </button>
+  </div>
+
+  <div class="filters-row">
+      <div class="select-wrapper">
+        <select id="city-select">
+            <optgroup label="北部">
+                <option value="keelung">KEELUNG / 基隆</option>
+                <option value="taipei">TAIPEI / 台北</option>
+                <option value="newtaipei">NEW TAIPEI / 新北</option>
+                <option value="taoyuan">TAOYUAN / 桃園</option>
+                <option value="hsinchu">HSINCHU / 新竹</option>
+                <option value="miaoli">MIAOLI / 苗栗</option>
+            </optgroup>
+            <optgroup label="中部">
+                <option value="taichung">TAICHUNG / 台中</option>
+                <option value="changhua">CHANGHUA / 彰化</option>
+                <option value="nantou">NANTOU / 南投</option>
+                <option value="yunlin">YUNLIN / 雲林</option>
+                <option value="chiayi">CHIAYI / 嘉義</option>
+            </optgroup>
+            <optgroup label="南部">
+                <option value="tainan" selected>TAINAN / 台南</option>
+                <option value="kaohsiung">KAOHSIUNG / 高雄</option>
+                <option value="pingtung">PINGTUNG / 屏東</option>
+            </optgroup>
+            <optgroup label="東部">
+                <option value="yilan">YILAN / 宜蘭</option>
+                <option value="hualien">HUALIEN / 花蓮</option>
+                <option value="taitung">TAITUNG / 台東</option>
+            </optgroup>
+            <optgroup label="離島">
+                <option value="penghu">PENGHU / 澎湖</option>
+                <option value="kinmen">KINMEN / 金門</option>
+                <option value="matsu">MATSU / 馬祖</option>
+            </optgroup>
+        </select>
+      </div>
+      <div class="select-wrapper">
+        <select id="mood-select">
+            <option value="all">MOOD / 所有心情</option>
+            <option value="work">QUIET / 想讀書</option>
+            <option value="alcohol">ALCOHOL / 想微醺</option>
+            <option value="night">LATE / 深夜限定</option>
+            <option value="retro">RETRO / 老屋感</option>
+            <option value="cat">CAT / 有貓咪</option>
+        </select>
+      </div>
+  </div>
+
+  <div id="main-frame">
+    <div class="img-box">
+      <div class="scan-line"></div>
+      <img
+        id="cafe-image"
+        src="https://loremflickr.com/600/400/cafe,night,bar/all?lock=1"
+        alt="Cafe Atmosphere"
+      />
+      <div class="name-overlay">
+        <span class="overlay-label">TARGET / 店名</span>
+        <div id="cafe-name">SYSTEM READY</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Closing / 營業至</span>
+        <div class="value" id="cafe-hours">--:--</div>
+      </div>
+      <div class="info-item">
+        <span class="label">Features / 特色</span>
+        <div class="value" id="cafe-features">---</div>
+      </div>
+      <div class="info-item full-width">
+        <span class="label">Location / 地址</span>
+        <div class="value" id="cafe-addr">Waiting for input...</div>
+        <div id="dist-tag">0.0 km</div>
+      </div>
+    </div>
+
+    <div id="map-link-container">
+      <a id="map-link" href="#" target="_blank" class="map-btn">
+        <span>ACCESS GOOGLE MAPS</span>
+        <span class="map-arrow">➔</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="btn-container">
+    <button id="action-btn" onclick="handleAction()">LOCATE & ROLL</button>
+  </div>
+
+  <audio id="bgm" loop preload="auto">
+      <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Jazz_Sampler/Kevin_MacLeod_-_Night_on_the_Docks_-_Sax.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const SHEET_ID = "1AW32gRTeuDLrI3DrgaWlirBUsbGBuD9H1s59xnYsBH0";
+    const RELIABLE_FALLBACK_IMG = "https://loremflickr.com/600/400/cafe,night,bar/all?lock=999";
+
+    function getStableRandomImageUrl() {
+      const lock = Math.floor(Math.random() * 50) + 1; 
+      return `https://loremflickr.com/600/400/cafe,coffee,night,interior/all?lock=${lock}`;
+    }
+
+    // 1. 建立全台城市資料結構
+    let CAFE_DATABASE = {
+        keelung: [], taipei: [], newtaipei: [], taoyuan: [], hsinchu: [], miaoli: [],
+        taichung: [], changhua: [], nantou: [], yunlin: [], chiayi: [],
+        tainan: [], kaohsiung: [], pingtung: [],
+        yilan: [], hualien: [], taitung: [],
+        penghu: [], kinmen: [], matsu: []
+    };
+    
+    // 2. 座標中心點 (GPS 模擬用)
+    const CITIES_CENTER = {
+        "keelung": { lat: 25.1276, lng: 121.7392 },
+        "taipei": { lat: 25.0330, lng: 121.5654 },
+        "newtaipei": { lat: 25.0120, lng: 121.4657 },
+        "taoyuan": { lat: 24.9936, lng: 121.3010 },
+        "hsinchu": { lat: 24.8138, lng: 120.9675 }, // 含縣市
+        "miaoli": { lat: 24.5602, lng: 120.8214 },
+        "taichung": { lat: 24.1477, lng: 120.6736 },
+        "changhua": { lat: 24.0518, lng: 120.5161 },
+        "nantou": { lat: 23.9610, lng: 120.9719 },
+        "yunlin": { lat: 23.7092, lng: 120.4313 },
+        "chiayi": { lat: 23.4801, lng: 120.4491 }, // 含縣市
+        "tainan": { lat: 22.9997, lng: 120.2270 },
+        "kaohsiung": { lat: 22.6273, lng: 120.3014 },
+        "pingtung": { lat: 22.5519, lng: 120.5487 },
+        "yilan": { lat: 24.7021, lng: 121.7377 },
+        "hualien": { lat: 23.9872, lng: 121.6011 },
+        "taitung": { lat: 22.7972, lng: 121.0714 },
+        "penghu": { lat: 23.5711, lng: 119.5793 },
+        "kinmen": { lat: 24.4404, lng: 118.3226 },
+        "matsu": { lat: 26.1512, lng: 119.9322 }
+    };
+
+    // 3. 城市名稱對照表 (讓中文輸入能對應到英文Key)
+    const CITY_MAP = {
+      "基隆": "keelung", "基隆市": "keelung", "keelung": "keelung",
+      "台北": "taipei", "台北市": "taipei", "臺北": "taipei", "臺北市": "taipei", "taipei": "taipei",
+      "新北": "newtaipei", "新北市": "newtaipei", "newtaipei": "newtaipei",
+      "桃園": "taoyuan", "桃園市": "taoyuan", "taoyuan": "taoyuan",
+      "新竹": "hsinchu", "新竹市": "hsinchu", "新竹縣": "hsinchu", "hsinchu": "hsinchu",
+      "苗栗": "miaoli", "苗栗縣": "miaoli", "miaoli": "miaoli",
+      "台中": "taichung", "台中市": "taichung", "臺中": "taichung", "臺中市": "taichung", "taichung": "taichung",
+      "彰化": "changhua", "彰化縣": "changhua", "changhua": "changhua",
+      "南投": "nantou", "南投縣": "nantou", "nantou": "nantou",
+      "雲林": "yunlin", "雲林縣": "yunlin", "yunlin": "yunlin",
+      "嘉義": "chiayi", "嘉義市": "chiayi", "嘉義縣": "chiayi", "chiayi": "chiayi",
+      "台南": "tainan", "台南市": "tainan", "臺南": "tainan", "臺南市": "tainan", "tainan": "tainan",
+      "高雄": "kaohsiung", "高雄市": "kaohsiung", "kaohsiung": "kaohsiung",
+      "屏東": "pingtung", "屏東縣": "pingtung", "pingtung": "pingtung",
+      "宜蘭": "yilan", "宜蘭縣": "yilan", "yilan": "yilan",
+      "花蓮": "hualien", "花蓮縣": "hualien", "hualien": "hualien",
+      "台東": "taitung", "台東縣": "taitung", "臺東": "taitung", "臺東縣": "taitung", "taitung": "taitung",
+      "澎湖": "penghu", "澎湖縣": "penghu", "penghu": "penghu",
+      "金門": "kinmen", "金門縣": "kinmen", "kinmen": "kinmen",
+      "馬祖": "matsu", "連江縣": "matsu", "matsu": "matsu"
+    };
+
+    let settingGPS = false;
+    let settingOpen = false;
+    let settingSound = true;
+    let settingBGM = false;
+    let userLat = null;
+    let userLng = null;
+
+    const btn = document.getElementById('action-btn');
+    const nameEl = document.getElementById('cafe-name');
+    const addrEl = document.getElementById('cafe-addr');
+    const hoursEl = document.getElementById('cafe-hours');
+    const featEl = document.getElementById('cafe-features');
+    const imgEl = document.getElementById('cafe-image');
+    const mapContainer = document.getElementById('map-link-container');
+    const mapLink = document.getElementById('map-link');
+    const citySelect = document.getElementById('city-select');
+    const moodSelect = document.getElementById('mood-select');
+    const distTag = document.getElementById('dist-tag');
+
+    const btnGPS = document.getElementById('btn-gps');
+    const btnOpen = document.getElementById('btn-open');
+    const btnSound = document.getElementById('btn-sound');
+    const btnBGM = document.getElementById('btn-bgm');
+    const bgmPlayer = document.getElementById('bgm');
+    bgmPlayer.volume = 0.4; // 預設音量小一點
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type, duration) {
+        if (!settingSound) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type; 
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime); 
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+    function playTick() { playTone(800, 'square', 0.05); } 
+    function playStop() { playTone(150, 'sine', 0.6); }   
+
+    function normalizeHoursString(s) {
+      const t = String(s).trim();
+      if (/^24\s*h$/i.test(t) || t === "24H" || t === "24h") return "24:00";
+      if (t === "24:00" || t === "23:59") return t;
+      const m1 = t.match(/(\d{1,2}):(\d{2})/);
+      if (!m1) return t;
+      let hh = parseInt(m1[1], 10);
+      const mm = m1[2];
+      const isPM = /PM|下午/i.test(t);
+      const isAM = /AM|上午/i.test(t);
+      if (isPM && hh < 12) hh += 12;
+      if (isAM && hh === 12) hh = 0;
+      return String(hh).padStart(2, "0") + ":" + mm;
+    }
+
+    function checkIsOpen(hoursStr) {
+        if (!hoursStr || hoursStr === "--:--") return true; 
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMin = now.getMinutes();
+        const currentTimeVal = currentHour * 60 + currentMin;
+        let [closeH, closeM] = hoursStr.split(':').map(Number);
+        if (isNaN(closeH)) return true; 
+        let closeTimeVal = closeH * 60 + (closeM || 0);
+        if (closeH < 12) closeTimeVal += 1440; 
+        let compareTimeVal = currentTimeVal;
+        if (currentHour < 12) compareTimeVal += 1440; 
+        return compareTimeVal < closeTimeVal;
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; 
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        return R * c;
+    }
+
+    function toggleGPS() {
+        settingGPS = !settingGPS;
+        btnGPS.classList.toggle('active');
+        if (settingGPS) {
+            if (navigator.geolocation) {
+                btnGPS.innerHTML = "定位中...";
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        userLat = pos.coords.latitude;
+                        userLng = pos.coords.longitude;
+                        btnGPS.innerHTML = `<span class="status-dot"></span> 10KM 內`;
+                        btnGPS.classList.add('gps-active');
+                        alert("定位成功！");
+                    },
+                    (err) => {
+                        alert("無法取得定位。");
+                        settingGPS = false;
+                        btnGPS.classList.remove('active');
+                        btnGPS.innerHTML = `<span class="status-dot"></span> 10KM 內`;
+                    }
+                );
+            } else {
+                alert("瀏覽器不支援 GPS");
+                settingGPS = false;
+                btnGPS.classList.remove('active');
+            }
+        } else {
+            btnGPS.classList.remove('gps-active');
+            userLat = null;
+            userLng = null;
+        }
+    }
+
+    function toggleOpen() {
+        settingOpen = !settingOpen;
+        btnOpen.classList.toggle('active');
+    }
+
+    function toggleSound() {
+        settingSound = !settingSound;
+        btnSound.classList.toggle('active');
+    }
+
+    async function toggleBGM() {
+        settingBGM = !settingBGM;
+        btnBGM.classList.toggle('active');
+        if (settingBGM) {
+            try {
+                await bgmPlayer.play();
+            } catch(e) {
+                console.log("BGM 播放被擋，等待使用者互動");
+                btnBGM.classList.remove('active');
+                settingBGM = false;
+                alert("請先點擊畫面任一處，再開啟 BGM (瀏覽器限制)");
+            }
+        } else {
+            bgmPlayer.pause();
+        }
+    }
+
+    function loadFromGoogleSheetJSONP() {
+      return new Promise((resolve, reject) => {
+        const cbName = "SHEET_CB_" + Math.random().toString(36).slice(2);
+        window[cbName] = (data) => {
+          try {
+            delete window[cbName];
+            script.remove();
+            const cols = data.table.cols || [];
+            const rows = data.table.rows || [];
+            const colIndex = {};
+            cols.forEach((c, i) => {
+              const label = (c.label || "").trim().toLowerCase();
+              if (label) colIndex[label] = i;
+            });
+
+            const findCol = (keys) => {
+                for (const k of keys) { if (colIndex[k] !== undefined) return colIndex[k]; }
+                return null;
+            };
+            const idxCity = findCol(["city", "城市", "地區"]);
+            const idxName = findCol(["name", "店名", "名稱"]);
+            const idxAddr = findCol(["addr", "address", "地址"]);
+            const idxHours = findCol(["hours", "time", "營業時間"]);
+            const idxFeatures = findCol(["features", "feature", "特色", "tags"]);
+
+            if (idxCity == null || idxName == null || idxAddr == null) throw new Error("Missing Columns");
+
+            // 重置資料庫
+            for(let k in CAFE_DATABASE) CAFE_DATABASE[k] = [];
+
+            for (const r of rows) {
+              const c = r.c || [];
+              const cityRaw = (c[idxCity]?.v || "").trim();
+              const name = (c[idxName]?.v || "").trim();
+              const addr = (c[idxAddr]?.v || "").trim();
+              let hours = (idxHours!==null && c[idxHours]) ? normalizeHoursString(c[idxHours].f || c[idxHours].v) : "--:--";
+              const features = (idxFeatures!==null && c[idxFeatures]?.v) ? String(c[idxFeatures].v) : "---";
+
+              const key = CITY_MAP[cityRaw];
+              if (!key || !name) continue;
+
+              const center = CITIES_CENTER[key];
+              const lat = center ? (center.lat + (Math.random() - 0.5) * 0.1) : null;
+              const lng = center ? (center.lng + (Math.random() - 0.5) * 0.1) : null;
+
+              CAFE_DATABASE[key].push({ name, addr, hours, features, lat, lng });
+            }
+            resolve();
+          } catch (e) { reject(e); }
+        };
+        const script = document.createElement("script");
+        script.onerror = () => reject(new Error("Network Error"));
+        script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:${cbName}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    let timer = null;
+    let isSpinning = false;
+    let currentList = [];
+    let currentIndex = 0;
+    let spinToken = 0;
+
+    async function handleAction() {
+      // 在使用者點擊時，嘗試啟動 Audio Context (解決自動播放限制)
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      // 在使用者點擊時，如果 BGM 開著但沒聲音，嘗試播放
+      if (settingBGM && bgmPlayer.paused) bgmPlayer.play();
+
+      if (!isSpinning) startRoulette();
+      else stopRoulette();
+    }
+
+    function startRoulette() {
+      const selectedCity = citySelect.value;
+      const selectedMood = moodSelect.value;
+      let rawList = CAFE_DATABASE[selectedCity];
+
+      if (!rawList || rawList.length === 0) {
+        alert("該地區目前沒有資料 (Google Sheet 未填寫)。");
+        return;
+      }
+
+      let filteredList = rawList.filter(cafe => {
+          let pass = true;
+          if (settingOpen && !checkIsOpen(cafe.hours)) pass = false;
+          if (settingGPS && userLat && cafe.lat) {
+              const dist = getDistance(userLat, userLng, cafe.lat, cafe.lng);
+              cafe.tempDist = dist.toFixed(1);
+              if (dist > 10) pass = false;
+          } else {
+              cafe.tempDist = null;
+          }
+          if (selectedMood !== 'all') {
+              const f = cafe.features.toLowerCase();
+              if (selectedMood === 'work' && !(f.includes('插座') || f.includes('讀書') || f.includes('安靜'))) pass = false;
+              if (selectedMood === 'alcohol' && !(f.includes('酒') || f.includes('bar') || f.includes('微醺'))) pass = false;
+              if (selectedMood === 'night' && !(f.includes('深夜') || f.includes('02:00') || f.includes('03:00') || f.includes('24h'))) pass = false;
+              if (selectedMood === 'retro' && !(f.includes('老') || f.includes('復古') || f.includes('昭和'))) pass = false;
+              if (selectedMood === 'cat' && !(f.includes('貓') || f.includes('寵物'))) pass = false;
+          }
+          return pass;
+      });
+
+      if (filteredList.length === 0) {
+          alert("條件太嚴苛，找不到店家了！\n(可能是該區沒有符合「心情」或「距離」的店)");
+          return;
+      }
+
+      currentList = filteredList;
+      isSpinning = true;
+      document.body.classList.add("spinning");
+      mapContainer.classList.remove('show');
+      distTag.style.display = 'none';
+      btn.innerHTML = "STOP / 鎖定";
+      btn.classList.add('stop-mode');
+      citySelect.disabled = true;
+      nameEl.style.opacity = 0.5;
+
+      const myToken = ++spinToken;
+
+      imgEl.onerror = function () {
+        if (!isSpinning || myToken !== spinToken) return;
+        this.src = RELIABLE_FALLBACK_IMG;
+      };
+
+      timer = setInterval(() => {
+        if (!isSpinning || myToken !== spinToken) return;
+        currentIndex = Math.floor(Math.random() * currentList.length);
+        const cafe = currentList[currentIndex];
+        nameEl.innerText = cafe.name;
+        addrEl.innerText = "SEARCHING_" + Math.floor(Math.random() * 9999);
+        hoursEl.innerText = "--:--";
+        featEl.innerText = "SCANNING";
+        imgEl.src = getStableRandomImageUrl();
+        playTick(); 
+      }, 100);
+    }
+
+    function stopRoulette() {
+      isSpinning = false;
+      spinToken++;
+      if (timer) { clearInterval(timer); timer = null; }
+      document.body.classList.remove("spinning");
+      const finalCafe = currentList[currentIndex];
+      imgEl.onerror = function () { this.onerror = null; this.src = RELIABLE_FALLBACK_IMG; };
+      nameEl.innerText = finalCafe.name;
+      nameEl.style.opacity = 1;
+      addrEl.innerText = finalCafe.addr;
+      hoursEl.innerText = finalCafe.hours || "--:--";
+      featEl.innerText = finalCafe.features || "---";
+      if (finalCafe.tempDist) {
+          distTag.innerText = `距 ${finalCafe.tempDist} km`;
+          distTag.style.display = 'block';
+      }
+      btn.innerHTML = "LOCATE & ROLL";
+      btn.classList.remove('stop-mode');
+      citySelect.disabled = false;
+      playStop(); 
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(finalCafe.name + " " + finalCafe.addr)}`;
+      mapLink.href = mapUrl;
+      mapContainer.classList.add('show');
+    }
+
+    (async function init() {
+      try { await loadFromGoogleSheetJSONP(); } catch (e) { console.warn("Load failed", e); }
+    })();
+  </script>
+</body>
+</html>
