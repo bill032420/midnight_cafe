@@ -399,7 +399,6 @@
     const RELIABLE_FALLBACK_IMG = "https://loremflickr.com/600/400/cafe,night,bar/all?lock=999";
 
     // 你的 Apps Script Web App URL (已部署的 doPost)
-    // 你前面給的 exec URL：
     const RECOMMEND_API_URL = "https://script.google.com/macros/s/AKfycbyiVU0QqAmYigWZh7YZTdGrQnOiuzDnetZhsH-Qno52q6p8wlxKXrxIEr2DdVyxYeaWDw/exec";
 
     function getStableRandomImageUrl() {
@@ -595,10 +594,8 @@
       const raw = (igValue || "").trim();
       if (!raw) return "";
       if (/^https?:\/\//i.test(raw)) return raw;
-      // allow @handle
       const handle = raw.replace(/^@/, "").trim();
       if (!handle) return "";
-      // if already contains instagram.com
       if (handle.includes("instagram.com")) {
         return "https://" + handle.replace(/^https?:\/\//i, "");
       }
@@ -626,7 +623,6 @@
         await navigator.clipboard.writeText(text);
         alert("已複製到剪貼簿");
       } catch (e) {
-        // fallback
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -635,6 +631,19 @@
         ta.remove();
         alert("已複製到剪貼簿");
       }
+    }
+
+    // ✅ 新增：最穩的 POST (no-cors) - 避免 iOS Safari / GitHub Pages CORS 爆炸
+    async function postRecommendationNoCors_(payload) {
+      const body = JSON.stringify(payload);
+      await fetch(RECOMMEND_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body
+      });
+      // no-cors 拿不到回應內容，所以到這裡就視為已送出
+      return { ok: true };
     }
 
     // ============================
@@ -898,8 +907,6 @@
       shareCard.classList.remove('show');
       recModal.classList.add('show');
       recModal.setAttribute('aria-hidden', 'false');
-
-      // prefill city based on current selection
       recCity.value = citySelect.value;
     }
 
@@ -930,24 +937,16 @@
       }
 
       try {
-        const res = await fetch(RECOMMEND_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json().catch(() => null);
-        if (!res.ok || !data || !data.ok) {
-          throw new Error((data && (data.error || data.message)) ? (data.error || data.message) : `HTTP ${res.status}`);
-        }
+        // ✅ 改這裡：用 no-cors + text/plain，避免 CORS / iOS Safari Load failed
+        await postRecommendationNoCors_(payload);
 
         closeRecModal();
-        // show share card
         showShareCard(payload);
 
-        // optional: reload sheet data so new entries can appear later
-        // (if you want immediate inclusion, you can keep this; otherwise comment out)
-        try { await loadFromGoogleSheetJSONP(); } catch(e) {}
+        // 背景延遲 refresh（讓新資料之後轉盤可讀到）
+        setTimeout(async () => {
+          try { await loadFromGoogleSheetJSONP(); } catch(e) {}
+        }, 1200);
 
       } catch (err) {
         alert("送出失敗：" + String(err && err.message ? err.message : err));
@@ -974,7 +973,6 @@
     }
 
     function getUserKey_() {
-      // local anonymous key
       const k = "midnight_user_key";
       let v = localStorage.getItem(k);
       if (!v) {
@@ -994,7 +992,6 @@
         console.warn("Load failed", e);
       }
 
-      // allow closing modal by tapping backdrop
       recModal.addEventListener('click', (ev) => {
         if (ev.target === recModal) closeRecModal();
       });
